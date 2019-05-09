@@ -2,6 +2,7 @@ import operator
 from itertools import permutations
 import numpy as np
 import sys
+import pandas as pd
 
 rng = np.random
 
@@ -12,6 +13,7 @@ class junctionTree:
         self.grps = None
         self.V = None
         self.weightedEdges = None
+
 
 
 
@@ -171,19 +173,39 @@ if __name__=='__main__':
     #
 
     # The way data looks like
-    edges = {0 :  [1, 2, 5, 7, 8],
-             1: [0, 3, 4, 9],
-             2: [0, 3, 4, 5, 6, 8],
-             3:[1, 2, 4],
-             4:[1, 2, 3],
-             5: [8, 0, 2],
-             6:[2],
-             7:[0],
-             8:[0,2,5],
-             9:[1]
 
-             }
-    # Initialization of Junction Tree (Instance)
+    # Read the CSV File
+    data = pd.read_csv("graph.csv")
+    data = data.values
+    totalVertices = []
+    # print(data)
+
+#     Create the adjacency list from data
+
+    edges = {}
+    for i in range(len(data)):
+        totalVertices.append(i)
+        temp = []
+        for j in range(len(data[0])):
+            if data[i][j] != 0 and i!=j:
+                temp.append(j)
+        if len(temp)>0:
+            edges[i] = temp
+    # print(edges)
+
+    # edges = {0 :  [1, 2, 5, 7, 8],
+    #          1: [0, 3, 4, 9],
+    #          2: [0, 3, 4, 5, 6, 8],
+    #          3:[1, 2, 4],
+    #          4:[1, 2, 3],
+    #          5: [8, 0, 2],
+    #          6:[2],
+    #          7:[0],
+    #          8:[0,2,5],
+    #          9:[1]
+    #
+    #          }
+#     # Initialization of Junction Tree (Instance)
     JT = junctionTree(edges)
 
     #
@@ -219,6 +241,7 @@ if __name__=='__main__':
     # unitTest = {1: [0, 5], 2: [4, 3]}
     weightedClique,clique = JT.weidhtedClique(newMaximal)
 
+
     # # print(clique)
     # # print(weightedClique)
     # # # JT.findWeights()
@@ -246,41 +269,64 @@ if __name__=='__main__':
     #         if graph[i][j] > 0:
     #             testMst[(i,j)] = graph[i][j]
     # print(testMst)
-    # print(clique)
+    print(clique)
 
     parent,weights = JT.primsForMST(graph,weightedClique,root)
-    # print(parent)
+
+    print(parent)
     pare = {}
     for key,val in parent.items():
         if val == -1:
             pare[key+1] = -1
         else:
             pare[key+1] = val+1
-    # print(pare)
-    parentNodes = []
-    childNodes = []
-    for i in range(1,len(pare)+1):
-        # print(pare[i],"--->", i)
-        if pare[i] not in  parentNodes and pare[i] != -1:
-            parentNodes.append(pare[i])
-
+    print(pare)
+    # parentNodes = []
+    # childNodes = []
+    # for i in range(1,len(pare)+1):
+    #     # print(pare[i],"--->", i)
+    #     if pare[i] not in  parentNodes and pare[i] != -1:
+    #         parentNodes.append(pare[i])
+    #
     print("Printing Junction Tree Instructions")
     print()
+
+    junctionTreeInTermsOfNodes = {}
     for key,val in pare.items():
         if val != -1:
             childSet = set(newMaximal[key])
             parentSet = set(newMaximal[val])
             # print(parentSet,childSet)
             commanEl = (parentSet.intersection(childSet))
-            print(childSet - commanEl,"in terms of ",commanEl)
+            # junctionTreeInTermsOfNodes[list(childSet - commanEl)] = commanEl
+            vertex = list(childSet - commanEl)
+            for i in vertex:
+                junctionTreeInTermsOfNodes[i] = list(commanEl)
+            print(list(childSet - commanEl),"in terms of ",commanEl)
     print("sum of ", set(newMaximal[root]))
+    print(newMaximal[root])
+
+    setRoot = set(newMaximal[root])
+    for i in newMaximal[root]:
+        vertex = set([i])
+        parentSet = setRoot - vertex
+        junctionTreeInTermsOfNodes[i] = list(parentSet)
 
 
+    print(totalVertices)
+
+    for i in totalVertices:
+        if junctionTreeInTermsOfNodes.get(i) == None:
+            junctionTreeInTermsOfNodes[i] = []
+    print(junctionTreeInTermsOfNodes)
 
 
-
-
-
+    #
+    #
+    #
+    #
+    #
+    #
 
 
 
@@ -291,5 +337,5 @@ if __name__=='__main__':
 
 
 
-
-
+#
+#
