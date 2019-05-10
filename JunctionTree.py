@@ -291,6 +291,7 @@ if __name__=='__main__':
     print("Printing Junction Tree Instructions")
     print()
 
+    eliminationQueue = []
     junctionTreeInTermsOfNodes = {}
     for key,val in pare.items():
         if val != -1:
@@ -300,11 +301,18 @@ if __name__=='__main__':
             commanEl = (parentSet.intersection(childSet))
             # junctionTreeInTermsOfNodes[list(childSet - commanEl)] = commanEl
             vertex = list(childSet - commanEl)
+
             for i in vertex:
                 junctionTreeInTermsOfNodes[i] = list(commanEl)
+            eliminationQueue.append(list(childSet - commanEl)[0])
             print(list(childSet - commanEl),"in terms of ",commanEl)
     print("sum of ", set(newMaximal[root]))
-    print(newMaximal[root])
+    for i in newMaximal[root]:
+        eliminationQueue.append(i)
+    print("Elimination Order",eliminationQueue)
+
+
+
 
     setRoot = set(newMaximal[root])
     for i in newMaximal[root]:
@@ -313,12 +321,12 @@ if __name__=='__main__':
         junctionTreeInTermsOfNodes[i] = list(parentSet)
 
 
-    print(totalVertices)
+    # print(totalVertices)
 
     for i in totalVertices:
         if junctionTreeInTermsOfNodes.get(i) == None:
             junctionTreeInTermsOfNodes[i] = []
-    print(junctionTreeInTermsOfNodes)
+    print("Junction Tree In Terms Of Nodes",junctionTreeInTermsOfNodes)
 
 
     #
